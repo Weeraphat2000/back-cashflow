@@ -1,0 +1,61 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
+}
+
+model User {
+  id           Int     @id @default(autoincrement())
+  firstName    String  @map("first_name") @db.VarChar(40)
+  lastName     String  @map("last_name") @db.VarChar(40)
+  email        String  @unique @db.VarChar(40)
+  mobile       String  @unique @db.VarChar(10)
+  password     String  @db.VarChar(100)
+  gender       Gender
+  profileImage String? @db.VarChar(200)
+
+  statements Statement[]
+
+  @@map("users")
+}
+
+model Category {
+  id           Int         @id @default(autoincrement())
+  categoryName String      @map("category_name")
+  statements   Statement[]
+
+  @@map("categorys")
+}
+
+model Statement {
+  id Int @id @default(autoincrement())
+
+  userId Int  @map("user_id")
+  user   User @relation(fields: [userId], references: [id])
+
+  categoryId Int      @map("category_id")
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  amount          Float
+  note            String?         @db.VarChar(200)
+  createdAt       DateTime        @default(now())
+  transactionType TransactionType
+
+  @@map("statements")
+}

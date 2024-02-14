@@ -17,7 +17,7 @@ exports.login = async (req, res, next) => {
     if (!data) {
       createError("username or password invalid", 201);
     }
-
+    console.log(user);
     const playload = { userId: user.id };
     const token = sign(playload);
     res.status(200).json({ user, token });

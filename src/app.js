@@ -9,6 +9,7 @@ const authRoute = require("./routes/auth-route");
 const { authenticate } = require("./middlewares/authenticate");
 const { prisma } = require("./models/prisma");
 const listRoute = require("./routes/list-route");
+const multer = require("multer");
 
 const app = express();
 

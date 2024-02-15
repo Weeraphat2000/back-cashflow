@@ -1,3 +1,4 @@
+// const { dateFormat } = require("dateformat");
 const { prisma } = require("../models/prisma");
 const {
   createListService,
@@ -47,7 +48,7 @@ exports.listCurrentDate = async (req, res, next) => {
       currentDate.getFullYear(),
       currentDate.getMonth(),
       currentDate.getDate(),
-      7,
+      -17,
       0,
       0
     ); // เวลาเริ่มต้นของวันปัจจุบัน
@@ -55,10 +56,12 @@ exports.listCurrentDate = async (req, res, next) => {
       currentDate.getFullYear(),
       currentDate.getMonth(),
       currentDate.getDate(),
-      31,
+      7,
       0,
       0
     ); // เวลาสิ้นสุดของวันปัจจุบัน
+    // const Currentdate = dateFormat(new Date(), "yyyy-mm-dd'T'HH:MM:ss.ms'Z'");
+    // console.log(Currentdate);
 
     // const data = await prisma.statement.findMany({
     //   where: {
@@ -80,6 +83,9 @@ exports.listCurrentDate = async (req, res, next) => {
       todayStart,
       todayEnd
     );
+    console.log(currentDate);
+    console.log(todayStart);
+    console.log(todayEnd);
 
     res.status(200).json({ data });
   } catch (err) {

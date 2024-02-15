@@ -1,19 +1,26 @@
 const { prisma } = require("../models/prisma");
+const {
+  createListService,
+  allListService,
+  listCurrentDateService,
+} = require("../services/list-service");
 // const dateFormat = require("dateformat");
 
 exports.createList = async (req, res, next) => {
   try {
-    // console.log(req.user.id);
     const data = {
       ...req.body,
       userId: req.user.id,
       amount: +req.body.amount,
       categoryId: +req.body.categoryId,
     };
-    console.log(data);
-    const result = await prisma.statement.create({ data });
+    // const result = await prisma.statement.create({
+    //   data,
+    //   include: { category: true },
+    // });
+    const result = await createListService(data);
 
-    res.status(200).json({ message: "created" });
+    res.status(200).json({ message: "created", data: result });
   } catch (er) {
     next(er);
   }
@@ -21,11 +28,12 @@ exports.createList = async (req, res, next) => {
 
 exports.allList = async (req, res, next) => {
   try {
-    console.log(req.user.id);
-    const data = await prisma.statement.findMany({
-      where: { userId: req.user.id },
-      orderBy: { createdAt: "desc" },
-    });
+    // const data = await prisma.statement.findMany({
+    //   where: { userId: req.user.id },
+    //   orderBy: { createdAt: "desc" },
+    //   include: { category: true },
+    // });
+    const data = await allListService(req.user.id);
     res.status(200).json({ data });
   } catch (err) {
     next(err);
@@ -52,20 +60,26 @@ exports.listCurrentDate = async (req, res, next) => {
       0
     ); // เวลาสิ้นสุดของวันปัจจุบัน
 
-    const data = await prisma.statement.findMany({
-      where: {
-        AND: [
-          { userId: req.user.id },
-          {
-            createdAt: {
-              gte: todayStart,
-              lte: todayEnd,
-            },
-          },
-        ],
-      },
-      orderBy: { createdAt: "desc" },
-    });
+    // const data = await prisma.statement.findMany({
+    //   where: {
+    //     AND: [
+    //       { userId: req.user.id },
+    //       {
+    //         createdAt: {
+    //           gte: todayStart,
+    //           lte: todayEnd,
+    //         },
+    //       },
+    //     ],
+    //   },
+    //   orderBy: { createdAt: "desc" },
+    //   include: { category: true },
+    // });
+    const data = await listCurrentDateService(
+      req.user.id,
+      todayStart,
+      todayEnd
+    );
 
     res.status(200).json({ data });
   } catch (err) {

@@ -1,15 +1,17 @@
 const { prisma } = require("../models/prisma");
 const { sign } = require("../services/jwt-service");
+const { findUser } = require("../services/login-sevice");
 const { createError } = require("../utils/create-error");
 const bcrypt = require("bcryptjs");
 
 exports.login = async (req, res, next) => {
   try {
-    const user = await prisma.user.findFirst({
-      where: {
-        OR: [{ email: req.body.username }, { mobile: req.body.username }],
-      },
-    });
+    // const user = await prisma.user.findFirst({
+    //   where: {
+    //     OR: [{ email: req.body.username }, { mobile: req.body.username }],
+    //   },
+    // });
+    const user = await findUser(req.body.username);
     if (!user) {
       createError("username or password invalid", 201);
     }

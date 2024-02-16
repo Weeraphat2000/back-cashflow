@@ -49,6 +49,7 @@ exports.listCurrentDate = async (req, res, next) => {
       currentDate.getMonth(),
       currentDate.getDate(),
       -17,
+      // 7,
       0,
       0
     ); // เวลาเริ่มต้นของวันปัจจุบัน
@@ -57,6 +58,7 @@ exports.listCurrentDate = async (req, res, next) => {
       currentDate.getMonth(),
       currentDate.getDate(),
       7,
+      // 31,
       0,
       0
     ); // เวลาสิ้นสุดของวันปัจจุบัน
@@ -87,6 +89,38 @@ exports.listCurrentDate = async (req, res, next) => {
     console.log(todayStart);
     console.log(todayEnd);
 
+    res.status(200).json({ data });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.editList = async (req, res, next) => {
+  try {
+    const data = {
+      ...req.body,
+      userId: req.user.id,
+      amount: +req.body.amount,
+      categoryId: +req.body.categoryId,
+    };
+    const id = +req.params.listId;
+
+    const newData = await prisma.statement.update({
+      where: { id },
+      data,
+      include: { category: true },
+    });
+    res.status(200).json({ message: "updateed", data: newData });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.deleteList = async (req, res, next) => {
+  try {
+    const data = await prisma.statement.delete({
+      where: { id: +req.params.listId },
+    });
     res.status(200).json({ data });
   } catch (err) {
     next(err);

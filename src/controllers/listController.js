@@ -1,4 +1,5 @@
 // const { dateFormat } = require("dateformat");
+const { exicute } = require("../db");
 const { prisma } = require("../models/prisma");
 const {
   createListService,
@@ -85,10 +86,15 @@ exports.listCurrentDate = async (req, res, next) => {
       todayStart,
       todayEnd
     );
-    console.log(currentDate);
-    console.log(todayStart);
-    console.log(todayEnd);
 
+    const sql = `select *
+                  from statements s inner join categorys c on s.category_id = c.id
+                  where date(createdAt) = date(current_date()) and user_id = ?`;
+    const value = [req.user.id];
+    const raw = await exicute(sql, value);
+    console.log("raw", raw);
+
+    console.log("data prisma", data);
     res.status(200).json({ data });
   } catch (err) {
     next(err);

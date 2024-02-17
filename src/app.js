@@ -10,6 +10,7 @@ const { authenticate } = require("./middlewares/authenticate");
 const { prisma } = require("./models/prisma");
 const listRoute = require("./routes/list-route");
 const multer = require("multer");
+const { dashboardRoute } = require("./routes/dashboard-route");
 
 const app = express();
 
@@ -25,6 +26,7 @@ app.get("/category", authenticate, async (req, res, next) => {
   const list = await prisma.category.findMany();
   res.status(200).json({ list });
 });
+app.use("/dashboard", authenticate, dashboardRoute);
 //
 
 app.use(notFound);

@@ -42,3 +42,19 @@ exports.currentMonthLine = async (req, res, next) => {
 
   res.status(200).json({ data: x });
 };
+
+exports.currentYear = async (req, res, next) => {
+  const sql = `select sum(amount) sum, category_name
+                from statements s inner join categorys c on s.category_id = c.id
+                where year(createdAt) = year(current_date()) and user_id = ? 
+                group by category_name;`;
+  //   const sql = `select sum(amount) sum, TransactionType, monthname(createdAt) as date
+  //                     from statements s inner join categorys c on s.category_id = c.id
+  //                     where year(createdAt) = year(current_date()) and user_id = ?
+  //                     group by monthname(createdAt), TransactionType,category_name
+  //                     order by monthname(createdAt)`;
+  const value = [req.user.id];
+  const data = await exicute(sql, value);
+
+  res.status(200).json({ data });
+};

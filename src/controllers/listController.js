@@ -49,8 +49,8 @@ exports.listCurrentDate = async (req, res, next) => {
       currentDate.getFullYear(),
       currentDate.getMonth(),
       currentDate.getDate(),
-      -17,
-      // 7,
+      // -17,
+      7,
       0,
       0
     ); // เวลาเริ่มต้นของวันปัจจุบัน
@@ -58,8 +58,8 @@ exports.listCurrentDate = async (req, res, next) => {
       currentDate.getFullYear(),
       currentDate.getMonth(),
       currentDate.getDate(),
-      7,
-      // 31,
+      // 7,
+      31,
       0,
       0
     ); // เวลาสิ้นสุดของวันปัจจุบัน

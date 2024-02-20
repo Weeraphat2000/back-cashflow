@@ -13,11 +13,11 @@ exports.login = async (req, res, next) => {
     // });
     const user = await findUser(req.body.username);
     if (!user) {
-      createError("username or password invalid", 201);
+      createError("username or password invalid", 400);
     }
     const data = await bcrypt.compare(req.body.password, user.password);
     if (!data) {
-      createError("username or password invalid", 201);
+      createError("username or password invalid", 400);
     }
     console.log(user);
     const playload = { userId: user.id };

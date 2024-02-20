@@ -48,13 +48,34 @@ exports.currentYear = async (req, res, next) => {
                 from statements s inner join categorys c on s.category_id = c.id
                 where year(createdAt) = year(current_date()) and user_id = ? 
                 group by category_name;`;
-  //   const sql = `select sum(amount) sum, TransactionType, monthname(createdAt) as date
-  //                     from statements s inner join categorys c on s.category_id = c.id
-  //                     where year(createdAt) = year(current_date()) and user_id = ?
-  //                     group by monthname(createdAt), TransactionType,category_name
-  //                     order by monthname(createdAt)`;
   const value = [req.user.id];
   const data = await exicute(sql, value);
 
+  res.status(200).json({ data });
+};
+
+exports.currentYearBar = async (req, res, next) => {
+  const sql = `select sum(amount) sum, TransactionType, month(createdAt) as month
+                from statements s inner join categorys c on s.category_id = c.id
+                where year(createdAt) = year(current_date()) and user_id = ?
+                group by month(createdAt), TransactionType
+                order by month(createdAt) asc;`;
+  // select sum(amount) sum, TransactionType, monthname(createdAt) as date
+  //     from statements s inner join categorys c on s.category_id = c.id
+  //     where year(createdAt) = year(current_date()) and user_id = 36
+  //     group by TransactionType, monthname(createdAt)
+  //     order by monthname(createdAt)
+  const value = [req.user.id];
+  const data = await exicute(sql, value);
+  res.status(200).json({ data });
+};
+
+exports.searchDate = async (req, res, next) => {
+  const sql = `select sum(amount) sum, category_name
+                from statements s inner join categorys c on s.category_id = c.id
+                where user_id = ? and createdAt between ? and ? 
+                group by category_name;`;
+  const value = [req.user.id, req.params.start, req.params.end];
+  const data = await exicute(sql, value);
   res.status(200).json({ data });
 };

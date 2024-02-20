@@ -11,6 +11,9 @@ const { prisma } = require("./models/prisma");
 const listRoute = require("./routes/list-route");
 const multer = require("multer");
 const { dashboardRoute } = require("./routes/dashboard-route");
+const { exicute } = require("./db");
+const { registerService } = require("./services/register-service");
+const { sign } = require("./services/jwt-service");
 
 const app = express();
 
@@ -28,6 +31,35 @@ app.get("/category", authenticate, async (req, res, next) => {
 });
 app.use("/dashboard", authenticate, dashboardRoute);
 //
+
+app.post("/loginWithFace", async (req, res, next) => {
+  try {
+    const sql = `select id from users where facebook_id = ?`;
+    const value = [req.body.id];
+    const user = await exicute(sql, value);
+    if (user.length == 0) {
+      const result = await exicute(
+        `insert into users (facebook_id) value (?)`,
+        [req.body.id]
+      );
+
+      console.log(result);
+      const playload = { userId: result.insertId };
+      const token = sign(playload);
+
+      res.status(200).json({ message: "register success", token });
+      return;
+    }
+    console.log(user);
+    const playload = { userId: user[0].id };
+    const token = sign(playload);
+
+    res.status(200).json({ message: "register success", token });
+    // res.status(200).json({ message: "มีแล้ว" });
+  } catch (err) {
+    next(err);
+  }
+});
 
 app.use(notFound);
 app.use(error);

@@ -1,6 +1,7 @@
 const { ValidationError } = require("joi");
 
 exports.error = (error, req, res, next) => {
+  console.log(error);
   if (error instanceof ValidationError) {
     error.errorCode = 400;
   }

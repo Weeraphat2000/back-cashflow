@@ -1,4 +1,3 @@
-// const { dateFormat } = require("dateformat");
 const { exicute } = require("../db");
 const { prisma } = require("../models/prisma");
 const {
@@ -6,15 +5,16 @@ const {
   allListService,
   listCurrentDateService,
 } = require("../services/list-service");
-// const dateFormat = require("dateformat");
 
 exports.createList = async (req, res, next) => {
   try {
+    // console.log(req.body, "CHECK USER");
     const data = {
       ...req.body,
       userId: req.user.id,
       amount: +req.body.amount,
       categoryId: +req.body.categoryId,
+      updatedAt: null,
     };
     // const result = await prisma.statement.create({
     //   data,
@@ -49,8 +49,8 @@ exports.listCurrentDate = async (req, res, next) => {
       currentDate.getFullYear(),
       currentDate.getMonth(),
       currentDate.getDate(),
-      // -17,
-      7,
+      -17,
+      // 7,
       0,
       0
     ); // เวลาเริ่มต้นของวันปัจจุบัน
@@ -58,8 +58,8 @@ exports.listCurrentDate = async (req, res, next) => {
       currentDate.getFullYear(),
       currentDate.getMonth(),
       currentDate.getDate(),
-      // 7,
-      31,
+      7,
+      // 31,
       0,
       0
     ); // เวลาสิ้นสุดของวันปัจจุบัน
@@ -108,6 +108,7 @@ exports.editList = async (req, res, next) => {
       userId: req.user.id,
       amount: +req.body.amount,
       categoryId: +req.body.categoryId,
+      updatedAt: new Date(),
     };
     const id = +req.params.listId;
 

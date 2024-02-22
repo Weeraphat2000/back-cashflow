@@ -6,11 +6,6 @@ const bcrypt = require("bcryptjs");
 
 exports.login = async (req, res, next) => {
   try {
-    // const user = await prisma.user.findFirst({
-    //   where: {
-    //     OR: [{ email: req.body.username }, { mobile: req.body.username }],
-    //   },
-    // });
     const user = await findUser(req.body.username);
     if (!user) {
       createError("username or password invalid", 400);

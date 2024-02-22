@@ -56,7 +56,8 @@ model Statement {
 
   amount          Float
   note            String?         @db.VarChar(200)
-  createdAt       DateTime        @default(now())
+  createdAt       DateTime        @default(now()) @db.Timestamp(0)
+  updatedAt       DateTime?       @db.Timestamp(0)
   transactionType TransactionType
 
   @@map("statements")

@@ -7,6 +7,7 @@ const bcrypt = require("bcryptjs");
 exports.login = async (req, res, next) => {
   try {
     const user = await findUser(req.body.username);
+
     if (!user) {
       createError("username or password invalid", 400);
     }

@@ -5,10 +5,27 @@ const {
   allListService,
   listCurrentDateService,
 } = require("../services/list-service");
+const { createError } = require("../utils/create-error");
 
 exports.createList = async (req, res, next) => {
   try {
-    // console.log(req.body, "CHECK USER");
+    if (
+      new Date(new Date().setHours(new Date().getHours() + 7)).toISOString() <
+      req.body.createdAt
+    ) {
+      createError("ล่วงหน้าไม้ได้นะจ้ะ", 400);
+    }
+
+    if (!req.body.amount || !+req.body.amount || req.body.amount <= 0) {
+      createError("amount number!", 400);
+    }
+    if (!req.body.categoryId || !+req.body.categoryId) {
+      createError("category number!", 400);
+    }
+
+    //
+    //
+
     const data = {
       ...req.body,
       userId: req.user.id,
@@ -16,10 +33,6 @@ exports.createList = async (req, res, next) => {
       categoryId: +req.body.categoryId,
       updatedAt: null,
     };
-    // const result = await prisma.statement.create({
-    //   data,
-    //   include: { category: true },
-    // });
     const result = await createListService(data);
 
     res.status(200).json({ message: "created", data: result });
@@ -49,8 +62,8 @@ exports.listCurrentDate = async (req, res, next) => {
       currentDate.getFullYear(),
       currentDate.getMonth(),
       currentDate.getDate(),
-      -17,
-      // 7,
+      // -17,
+      7,
       0,
       0
     ); // เวลาเริ่มต้นของวันปัจจุบัน
@@ -58,8 +71,8 @@ exports.listCurrentDate = async (req, res, next) => {
       currentDate.getFullYear(),
       currentDate.getMonth(),
       currentDate.getDate(),
-      7,
-      // 31,
+      // 7,
+      31,
       0,
       0
     ); // เวลาสิ้นสุดของวันปัจจุบัน
@@ -101,8 +114,41 @@ exports.listCurrentDate = async (req, res, next) => {
   }
 };
 
+// สรา้ง midleware มันกันเลยน่าจะดีกว่าช่ไหม
 exports.editList = async (req, res, next) => {
   try {
+    if (req.body.amount && !+req.body.amount) {
+      createError("number!", 400);
+    }
+    if (req.body.categoryId && !+req.body.categoryId) {
+      createError("number!", 400);
+    }
+
+    if (
+      new Date(new Date().setHours(new Date().getHours() + 7)).toISOString() <
+      req.body.createdAt
+    ) {
+      createError("ล่วงหน้าไม่ได้นะจ้ะ จากหลังบ้าน", 400);
+    }
+
+    const isOwnerList = await exicute(
+      `select * from statements where id = ? and user_id = ?`,
+      [+req.params.listId, req.user.id]
+    );
+    if (isOwnerList.length == 0) {
+      createError("หาไม่เจอนะจ้ะ", 400);
+    }
+    // if (isOwnerList[0].user_id !== req.user.id) {
+    //   createError("อย่ามายุ่งของคนอื่น", 400);
+    // }
+
+    if (
+      req.body.transactionType !== "INCOME" &&
+      req.body.transactionType != "EXPENSE"
+    ) {
+      createError("transactionType ไม่ถูก", 400);
+    }
+
     const data = {
       ...req.body,
       userId: req.user.id,
@@ -125,6 +171,13 @@ exports.editList = async (req, res, next) => {
 
 exports.deleteList = async (req, res, next) => {
   try {
+    const isOwnerList = await exicute(`select * from statements where id = ?`, [
+      +req.params.listId,
+    ]);
+    if (isOwnerList[0].user_id !== req.user.id) {
+      createError("อย่ามายุ่งของคนอื่น", 400);
+    }
+
     const data = await prisma.statement.delete({
       where: { id: +req.params.listId },
     });

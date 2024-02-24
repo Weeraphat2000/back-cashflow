@@ -18,7 +18,7 @@ exports.register = async (req, res, next) => {
     const isDuplicate = await checkUserDuplicate(req.body);
     console.log(isDuplicate);
     if (isDuplicate) {
-      createError("Email or mobile already in use", 201);
+      createError("Email or mobile already in use", 400);
       // res.status(400).json({ message: "diplicate" });
       // return;
     }

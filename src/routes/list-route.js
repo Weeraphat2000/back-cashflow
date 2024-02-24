@@ -7,6 +7,9 @@ const {
   editList,
   deleteList,
 } = require("../controllers/listController");
+const {
+  validateCreateList,
+} = require("../middlewares/validators/validate-list");
 
 const listRoute = Router();
 listRoute.get("/", authenticate, allList);

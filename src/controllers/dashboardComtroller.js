@@ -1,4 +1,5 @@
 const { exicute } = require("../db");
+// const datea = require("dateformat");
 
 exports.currentDate = async (req, res, next) => {
   try {
@@ -104,6 +105,37 @@ exports.searchDate = async (req, res, next) => {
 
 exports.searchDateLine = async (req, res, next) => {
   try {
+    // req.params.start = req.params.start + "T00:00:00.000Z";
+    // req.params.end = (
+    //   "" +
+    //   new Date(
+    //     new Date().setDate(new Date(req.params.end).getDate() + 1)
+    //   ).toISOString()
+    // ).slice(0, 10);
+    // console.log(req.params.start);
+    // console.log(new Date(req.params.end).getDate() + 1);
+    req.params.end = req.params.end + "T23:59:59.00Z";
+
+    // const xx = (
+    //   "" +
+    //   new Date(
+    //     new Date().setDate(new Date(req.params.end).getDate() + 1)
+    //   ).toISOString()
+    // ).slice(0, 10);
+
+    // console.log(
+    //   (
+    //     "" +
+    //     new Date(
+    //       new Date().setDate(new Date(req.params.end).getDate() + 1)
+    //     ).toISOString()
+    //   ).slice(0, 10)
+    // );
+    // console.log(xx);
+    console.log(req.params.end);
+    console.log(req.params.start);
+
+    // console.log(req.params.end);
     const sql = `select sum(amount) sum, TransactionType, date(createdAt) as date
                     from statements s inner join categorys c on s.category_id = c.id
                     where user_id = ? and createdAt between ? and ?

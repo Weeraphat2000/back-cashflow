@@ -12,7 +12,7 @@ const {
 } = require("../middlewares/validators/validate-list");
 
 const listRoute = Router();
-listRoute.get("/", authenticate, allList);
+listRoute.get("/:offset/:limit", authenticate, allList);
 listRoute.get("/current", authenticate, listCurrentDate);
 listRoute.post("/", authenticate, createList);
 listRoute.patch("/:listId", authenticate, editList);

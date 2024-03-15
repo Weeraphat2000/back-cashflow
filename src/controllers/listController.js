@@ -48,7 +48,9 @@ exports.allList = async (req, res, next) => {
     //   orderBy: { createdAt: "desc" },
     //   include: { category: true },
     // });
-    const data = await allListService(req.user.id);
+    const { offset, limit } = req.params;
+    console.log(limit, "offset");
+    const data = await allListService(req.user.id, +offset, +limit);
     res.status(200).json({ data });
   } catch (err) {
     next(err);

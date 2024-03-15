@@ -6,11 +6,13 @@ exports.createListService = (data) =>
     include: { category: true },
   });
 
-exports.allListService = (id) =>
+exports.allListService = (id, skip, take) =>
   prisma.statement.findMany({
     where: { userId: id },
     orderBy: { createdAt: "desc" },
     include: { category: true },
+    skip,
+    take,
   });
 
 exports.listCurrentDateService = (id, todayStart, todayEnd) =>

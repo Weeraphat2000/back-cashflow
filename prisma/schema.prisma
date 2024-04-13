@@ -10,193 +10,194 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// enum Gender {
-//   MALE
-//   FEMALE
-// }
-
-// enum TransactionType {
-//   INCOME
-//   EXPENSE
-// }
-
-// model User {
-//   id           Int     @id @default(autoincrement())
-//   firstName    String? @map("first_name") @db.VarChar(40)
-//   lastName     String? @map("last_name") @db.VarChar(40)
-//   email        String? @unique @db.VarChar(40)
-//   mobile       String? @unique @db.VarChar(10)
-//   password     String? @db.VarChar(100)
-//   gender       Gender?
-//   profileImage String? @db.VarChar(200)
-
-//   facebook String? @map("facebook_id")
-
-//   statements Statement[]
-
-//   @@map("users")
-// }
-
-// model Category {
-//   id           Int         @id @default(autoincrement())
-//   categoryName String      @map("category_name")
-//   statements   Statement[]
-
-//   @@map("categorys")
-// }
-
-// model Statement {
-//   id Int @id @default(autoincrement())
-
-//   userId Int  @map("user_id")
-//   user   User @relation(fields: [userId], references: [id])
-
-//   categoryId Int      @map("category_id")
-//   category   Category @relation(fields: [categoryId], references: [id])
-
-//   amount          Float
-//   note            String?         @db.VarChar(200)
-//   createdAt       DateTime        @default(now()) @db.Timestamp(0)
-//   updatedAt       DateTime?       @db.Timestamp(0)
-//   transactionType TransactionType
-
-//   @@map("statements")
-// }
-
-// 
 enum Gender {
   MALE
   FEMALE
 }
 
-enum Role {
-  USER
-  ADMIN
-  MERCHANT
+enum TransactionType {
+  INCOME
+  EXPENSE
 }
 
 model User {
-  id         Int       @id
-  facebookId String?   @unique @map("facebook_id") @db.VarChar(50)
-  googleId   String?   @unique @map("google_id") @db.VarChar(50)
-  name       String?   @db.VarChar(50)
-  mobile     String?   @unique @db.VarChar(10)
-  email      String?   @unique @db.VarChar(40)
-  password   String?   @db.VarChar(191)
-  age        Int?
-  gender     Gender?
-  birthdate  DateTime?
-  imgProfile String?   @map("img_profile") @db.VarChar(200)
-  createdAt  DateTime  @default(now()) @map("created_at")
-  role       Boolean   @default(false)
+  id           Int     @id @default(autoincrement())
+  firstName    String? @map("first_name") @db.VarChar(40)
+  lastName     String? @map("last_name") @db.VarChar(40)
+  email        String? @unique @db.VarChar(40)
+  mobile       String? @unique @db.VarChar(10)
+  password     String? @db.VarChar(100)
+  gender       Gender?
+  profileImage String? @db.VarChar(200)
+  age          Int     @default(0)
 
-  reviews  Review[]
-  Bookmark Bookmark[]
+  facebook String? @map("facebook_id")
+
+  statements Statement[]
 
   @@map("users")
 }
 
-model Merchant {
-  id       Int     @id
-  username String  @unique @db.VarChar(40)
-  password String  @db.VarChar(200)
-  mobile   String? @unique @db.VarChar(10)
-  role     Role    @default(MERCHANT)
-
-  Restaurant Restaurant[]
-
-  @@map("merchants")
-}
-
-model Restaurant {
-  id             Int      @id
-  merchantId     Int      @map("merchant_id")
-  merchant       Merchant @relation(fields: [merchantId], references: [id])
-  restaurantName String   @map("restaurant_name") @db.VarChar(100)
-  subtitle       String   @db.VarChar(200)
-  star           Int
-  lat            Int
-  lng            Int
-  reviewPoint    Int?     @map("review_point")
-  reviewCount    Int?     @map("review_count")
-  verify         Boolean  @default(false)
-  role           Role     @default(USER)
-  // เวลาเปิดปิด
-
-  RestauranImage RestauranImage[]
-  Menu           Menu[]
-  Review         Review[]
-  Bookmark       Bookmark[]
-
-  @@map("restaurants")
-}
-
-model RestauranImage {
-  id           Int        @id
-  restaurantId Int
-  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
-  img          String     @db.VarChar(200)
-
-  @@map("restaurant_img")
-}
-
-model Menu {
-  id           Int        @id
-  restaurantId Int        @map("restaurant_id")
-  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
-  menuName     String     @map("menu_name") @db.VarChar(100)
-  body         String     @db.VarChar(200)
-  price        Int
-  star         Int
-  img          String     @db.VarChar(200)
-
-  @@map("menus")
-}
-
-model Review {
-  id           Int        @id
-  userId       Int        @map("user_id")
-  user         User       @relation(fields: [userId], references: [id])
-  restaurantId Int        @map("restaurant_id")
-  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
-  star         Int
-  status       Boolean
-  // report       Boolean
-  createdAt    DateTime   @map("created_at")
-  deletedAt    DateTime   @map("deleted_at")
-
-  @@map("reviews")
-}
-
 model Category {
-  id           Int    @id
-  categoryName String @map("category_name") @db.VarChar(50)
+  id           Int         @id @default(autoincrement())
+  categoryName String      @map("category_name")
+  statements   Statement[]
 
   @@map("categorys")
 }
 
-model More {
-  id       Int    @id
-  moreName String @map("more_name") @db.VarChar(50)
+model Statement {
+  id Int @id @default(autoincrement())
 
-  @@map("mores")
+  userId Int  @map("user_id")
+  user   User @relation(fields: [userId], references: [id])
+
+  categoryId Int      @map("category_id")
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  amount          Float
+  note            String?         @db.VarChar(200)
+  createdAt       DateTime        @default(now()) @db.Timestamp(0)
+  updatedAt       DateTime?       @db.Timestamp(0)
+  transactionType TransactionType
+
+  @@map("statements")
 }
 
-model Admin {
-  id       Int    @id
-  username String @unique @db.VarChar(50)
-  password String @db.VarChar(50)
-  role     Role   @default(ADMIN)
+// 
+// enum Gender {
+//   MALE
+//   FEMALE
+// }
 
-  @@map("admins")
-}
+// enum Role {
+//   USER
+//   ADMIN
+//   MERCHANT
+// }
 
-model Bookmark {
-  id           Int        @id
-  userId       Int        @map("user_id")
-  user         User       @relation(fields: [userId], references: [id])
-  restaurantId Int        @map("restaurant_id")
-  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+// model User {
+//   id         Int       @id
+//   facebookId String?   @unique @map("facebook_id") @db.VarChar(50)
+//   googleId   String?   @unique @map("google_id") @db.VarChar(50)
+//   name       String?   @db.VarChar(50)
+//   mobile     String?   @unique @db.VarChar(10)
+//   email      String?   @unique @db.VarChar(40)
+//   password   String?   @db.VarChar(191)
+//   age        Int?
+//   gender     Gender?
+//   birthdate  DateTime?
+//   imgProfile String?   @map("img_profile") @db.VarChar(200)
+//   createdAt  DateTime  @default(now()) @map("created_at")
+//   role       Boolean   @default(false)
 
-  @@map("bookmarks")
-}
+//   reviews  Review[]
+//   Bookmark Bookmark[]
+
+//   @@map("users")
+// }
+
+// model Merchant {
+//   id       Int     @id
+//   username String  @unique @db.VarChar(40)
+//   password String  @db.VarChar(200)
+//   mobile   String? @unique @db.VarChar(10)
+//   role     Role    @default(MERCHANT)
+
+//   Restaurant Restaurant[]
+
+//   @@map("merchants")
+// }
+
+// model Restaurant {
+//   id             Int      @id
+//   merchantId     Int      @map("merchant_id")
+//   merchant       Merchant @relation(fields: [merchantId], references: [id])
+//   restaurantName String   @map("restaurant_name") @db.VarChar(100)
+//   subtitle       String   @db.VarChar(200)
+//   star           Int
+//   lat            Int
+//   lng            Int
+//   reviewPoint    Int?     @map("review_point")
+//   reviewCount    Int?     @map("review_count")
+//   verify         Boolean  @default(false)
+//   role           Role     @default(USER)
+//   // เวลาเปิดปิด
+
+//   RestauranImage RestauranImage[]
+//   Menu           Menu[]
+//   Review         Review[]
+//   Bookmark       Bookmark[]
+
+//   @@map("restaurants")
+// }
+
+// model RestauranImage {
+//   id           Int        @id
+//   restaurantId Int
+//   restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+//   img          String     @db.VarChar(200)
+
+//   @@map("restaurant_img")
+// }
+
+// model Menu {
+//   id           Int        @id
+//   restaurantId Int        @map("restaurant_id")
+//   restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+//   menuName     String     @map("menu_name") @db.VarChar(100)
+//   body         String     @db.VarChar(200)
+//   price        Int
+//   star         Int
+//   img          String     @db.VarChar(200)
+
+//   @@map("menus")
+// }
+
+// model Review {
+//   id           Int        @id
+//   userId       Int        @map("user_id")
+//   user         User       @relation(fields: [userId], references: [id])
+//   restaurantId Int        @map("restaurant_id")
+//   restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+//   star         Int
+//   status       Boolean
+//   // report       Boolean
+//   createdAt    DateTime   @map("created_at")
+//   deletedAt    DateTime   @map("deleted_at")
+
+//   @@map("reviews")
+// }
+
+// model Category {
+//   id           Int    @id
+//   categoryName String @map("category_name") @db.VarChar(50)
+
+//   @@map("categorys")
+// }
+
+// model More {
+//   id       Int    @id
+//   moreName String @map("more_name") @db.VarChar(50)
+
+//   @@map("mores")
+// }
+
+// model Admin {
+//   id       Int    @id
+//   username String @unique @db.VarChar(50)
+//   password String @db.VarChar(50)
+//   role     Role   @default(ADMIN)
+
+//   @@map("admins")
+// }
+
+// model Bookmark {
+//   id           Int        @id
+//   userId       Int        @map("user_id")
+//   user         User       @relation(fields: [userId], references: [id])
+//   restaurantId Int        @map("restaurant_id")
+//   restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+
+//   @@map("bookmarks")
+// }
